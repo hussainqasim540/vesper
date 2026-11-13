@@ -4,12 +4,13 @@
 #   tools/dist.sh [--cores DIR] [--background IMAGE]
 #
 # DIR holds aarch64 libretro cores (gpsp_libretro.so, mgba_libretro.so,
-# gambatte_libretro.so); IMAGE is the wallpaper for tools/make_background.py.
-# Without them the folder has no cores, or keeps build/card/background.vimg.
+# gambatte_libretro.so); it defaults to build/cores (tools/build_cores.sh).
+# IMAGE is the wallpaper for tools/make_background.py; without it the folder
+# keeps build/card/background.vimg.
 # Copy build/card/vesper to the root of the card's FAT partition.
 set -eu
 here=$(cd "$(dirname "$0")/.." && pwd)
-cores= background=
+cores="$here/build/cores" background=
 while [ $# -gt 0 ]; do
   case "$1" in
   --cores) cores=$2; shift 2 ;;
@@ -27,10 +28,12 @@ if [ -n "$background" ]; then
 elif [ -f "$here/build/card/background.vimg" ]; then
   cp "$here/build/card/background.vimg" "$out/assets/"
 fi
-if [ -n "$cores" ]; then
+if [ -d "$cores" ]; then
   for c in gpsp mgba gambatte; do
     [ -f "$cores/${c}_libretro.so" ] && cp "$cores/${c}_libretro.so" "$out/cores/"
+    [ -f "$cores/${c}-COPYING" ] && cp "$cores/${c}-COPYING" "$out/cores/"
   done
+  [ -f "$cores/SOURCES.txt" ] && cp "$cores/SOURCES.txt" "$out/cores/"
 fi
 echo "$out:"
 (cd "$out" && find . -type f | sort)
