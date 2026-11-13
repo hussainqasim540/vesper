@@ -92,8 +92,14 @@ vesper/
   assets/background.vimg      the background
 ```
 
-`games-dirs.txt` lets Vesper share another frontend's ROMs on a small card,
-for example a line `/flash/slot/Games`. Saves stay in Vesper's own `saves/`.
+Vesper also reads `/games`, where Lume (from r36s-lightos's GAMES commit)
+mounts a FAT partition labelled `GAMES` when the card has one: the room
+past the 2 GB `ROCKNIX` partition, for the DS games. `VESPER_GAMES`
+overrides the folder. Over Lume's USB disk the computer sees `GAMES` as a
+second disk, next to `ROCKNIX`.
+
+`games-dirs.txt` lets Vesper share another frontend's ROMs, for example a
+line `/flash/slot/Games`. Saves stay in Vesper's own `saves/`, on `ROCKNIX`.
 
 `VESPER_ROOT` overrides the folder; otherwise it is the parent of `bin/`.
 Logs go to stderr, with a `pace:` line every 10 s (frames, late frames).

@@ -9,6 +9,8 @@
  *   saves/                       battery saves (.sav)
  *   system/                      BIOS files, for the cores that want them
  *   assets/background.vimg       the background (tools/make_background.py)
+ * and the games of the card's games partition, which Lume mounts on /games
+ * (VESPER_GAMES overrides the folder).
  */
 #include <errno.h>
 #include <limits.h>
@@ -462,7 +464,13 @@ static int app_init(struct app *a, int offscreen)
 	 * ROMs on a small card. */
 	path_in(a, p, sizeof p, "games-dirs.txt");
 	int more = shelf_add_dirs_from(&a->shelf, p);
-	LOG("%d games (%d from games-dirs.txt)", a->shelf.count, more);
+	/* The rest of a big card: a FAT partition labelled GAMES. */
+	const char *part = getenv("VESPER_GAMES");
+	if (!part || !*part)
+		part = "/games";
+	int on_part = shelf_add_dir(&a->shelf, part);
+	LOG("%d games (%d from games-dirs.txt, %d from %s)", a->shelf.count, more,
+	    on_part < 0 ? 0 : on_part, part);
 	return 0;
 }
 
