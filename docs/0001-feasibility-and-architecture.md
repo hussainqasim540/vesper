@@ -211,6 +211,9 @@ benchmark.
 
 1. **Frontend skeleton:** KMS/GLES, evdev, ALSA, a shelf with the
    background, GBA/GBC through libretro.
+   Written on 2026-11-13 (see the README's Status): built for aarch64 and
+   checked off the console; the check on the console waits for Lume's init
+   to start a frontend other than slot.
 2. **Benchmark** DSperate as it is (its SDL frontend on KMSDRM, built for
    the A35), DraStic for comparison, and gpSP and mGBA, on the console.
    If DSperate holds the speed, it is the DS emulator.
