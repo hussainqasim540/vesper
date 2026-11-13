@@ -90,6 +90,25 @@ static void test_shelf(void)
 		CHECK(s.games[1].sys == SYS_GBA);
 		CHECK_STR(s.games[2].name, "c");
 	}
+	/* Another folder from a list file, with a comment, CRLF, a bad path. */
+	char other[] = "/tmp/vesper-test2-XXXXXX";
+	if (mkdtemp(other)) {
+		snprintf(p, sizeof p, "%s/GBA", other), mkdir(p, 0755);
+		snprintf(p, sizeof p, "%s/GBA/Zeta.gba", other), touch(p);
+		char list[300];
+		snprintf(list, sizeof list, "%s/dirs.txt", dir);
+		FILE *f = fopen(list, "w");
+		if (f) {
+			fprintf(f, "# slot's games\r\n  %s\r\n/nonexistent/x\n\n", other);
+			fclose(f);
+		}
+		CHECK(shelf_add_dirs_from(&s, list) == 1);
+		CHECK(s.count == 4 && strcmp(s.games[3].name, "Zeta") == 0);
+		CHECK(shelf_add_dirs_from(&s, "/nonexistent/list") == 0);
+		char cmd2[300];
+		snprintf(cmd2, sizeof cmd2, "rm -rf '%s'", other);
+		CHECK(system(cmd2) == 0);
+	}
 	shelf_free(&s);
 	CHECK(shelf_scan(&s, "/nonexistent/vesper") == -1);
 

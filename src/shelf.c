@@ -129,17 +129,47 @@ static int cmp_games(const void *a, const void *b)
 	return strcmp(x->path, y->path);
 }
 
-int shelf_scan(struct shelf *s, const char *dir)
+int shelf_add_dir(struct shelf *s, const char *dir)
 {
-	s->count = 0;
 	DIR *d = opendir(dir);
 	if (!d)
 		return -1;
 	closedir(d);
-	scan_dir(s, dir, 1);
+	int before = s->count;
+	scan_dir(s, dir, 2); /* dir/GBA/game.gba, dir/gba/hacks/game.gba */
 	if (s->count > 1)
 		qsort(s->games, (size_t)s->count, sizeof *s->games, cmp_games);
-	return s->count;
+	return s->count - before;
+}
+
+int shelf_scan(struct shelf *s, const char *dir)
+{
+	s->count = 0;
+	return shelf_add_dir(s, dir) < 0 ? -1 : s->count;
+}
+
+int shelf_add_dirs_from(struct shelf *s, const char *list_path)
+{
+	FILE *f = fopen(list_path, "r");
+	if (!f)
+		return 0;
+	char line[1024];
+	int added = 0;
+	while (fgets(line, sizeof line, f)) {
+		char *p = line;
+		while (*p == ' ' || *p == '\t')
+			p++;
+		size_t len = strlen(p);
+		while (len && (p[len - 1] == '\n' || p[len - 1] == '\r' || p[len - 1] == ' '))
+			p[--len] = '\0';
+		if (len == 0 || *p == '#')
+			continue;
+		int n = shelf_add_dir(s, p);
+		if (n > 0)
+			added += n;
+	}
+	fclose(f);
+	return added;
 }
 
 void shelf_free(struct shelf *s)

@@ -20,13 +20,14 @@ Milestone 1, the skeleton:
   written every 10 s when they change, and on leaving the game.
 - DS games show on the shelf; they start with milestone 3 (DSperate).
 
-**Checked so far:** the host tests (154 checks, ASan and UBSan, with clang on the Mac and gcc in Linux), the
+**Checked so far:** the host tests (158 checks, ASan and UBSan, with clang on the Mac and gcc in Linux), the
 aarch64 build against Lume's userland, gpSP and mGBA running a GBA game
 through Vesper's libretro host on that userland (picture, audio samples and input; not ALSA output),
 Vesper's own gpSP and Gambatte builds running a GBA game and a GBC test
 ROM the same way, and screenshots of the shelf and a game drawn by the same GLES code with
-Mesa's software renderer. **Not yet checked on the console:** Lume's init
-starts only slot today (see below).
+Mesa's software renderer, and Lume's init starting it (r36s-lightos's
+`tools/test_init_stages.sh`, case realvesper). **Not yet checked on the
+console.**
 
 ## Buttons
 
@@ -85,20 +86,24 @@ vesper/
   bin/vesper                  the program
   cores/*_libretro.so         gpsp, mgba, gambatte
   games/                      ROMs (.gba .gbc .gb .nds), also in subfolders
+  games-dirs.txt              more ROM folders, one a line (optional)
   saves/                      battery saves (.sav), one per ROM
   system/                     BIOS files, for the cores that use them
   assets/background.vimg      the background
 ```
 
+`games-dirs.txt` lets Vesper share another frontend's ROMs on a small card,
+for example a line `/flash/slot/Games`. Saves stay in Vesper's own `saves/`.
+
 `VESPER_ROOT` overrides the folder; otherwise it is the parent of `bin/`.
 Logs go to stderr, with a `pace:` line every 10 s (frames, late frames).
 
-**Lume does not start it yet.** Its init runs only `/flash/slot/System/slot`.
-Vesper needs init to read the frontend's path from the card (for example a
-`lightos/frontend` file), with the same environment and the same
-`poweroff`/`reboot` shims. That is a change for the r36s-lightos repo.
-Vesper already calls `poweroff` and `reboot` straight from its own
-process, after saving and `sync`, as those shims expect.
+**Under Lume** (r36s-lightos 231c456 and later): copy `build/card/vesper`
+to the root of the card's FAT partition and write `vesper` in
+`lightos/frontend`; without that file Lume starts slot. Lume gives Vesper
+`VESPER_ROOT=/flash/vesper`, `HOME=/tmp` and its `poweroff`/`reboot`
+shims, which end Vesper: it calls them from its own process after saving
+and `sync`. Its log is `vesper/logs/vesper.log`, and in the boot's logs.
 
 ## Licence
 

@@ -5,6 +5,7 @@
  *   bin/vesper                   this program
  *   cores/<name>_libretro.so     gpsp, mgba, gambatte...
  *   games/                       ROMs, also in subfolders
+ *   games-dirs.txt               more ROM folders, one a line (optional)
  *   saves/                       battery saves (.sav)
  *   system/                      BIOS files, for the cores that want them
  *   assets/background.vimg       the background (tools/make_background.py)
@@ -457,7 +458,11 @@ static int app_init(struct app *a, int offscreen)
 	path_in(a, p, sizeof p, "games");
 	if (shelf_scan(&a->shelf, p) < 0)
 		LOG("cannot read %s", p);
-	LOG("%d games", a->shelf.count);
+	/* More folders, one a line: e.g. /flash/slot/Games, to share slot's
+	 * ROMs on a small card. */
+	path_in(a, p, sizeof p, "games-dirs.txt");
+	int more = shelf_add_dirs_from(&a->shelf, p);
+	LOG("%d games (%d from games-dirs.txt)", a->shelf.count, more);
 	return 0;
 }
 

@@ -15,9 +15,15 @@ struct shelf {
 	int count, cap;
 };
 
-/* Fills the shelf from dir and its subfolders (one level), by extension,
+/* Fills the shelf from dir and its subfolders (two levels), by extension,
  * sorted by name. Returns the number of games, or -1 if dir can't be read. */
 int shelf_scan(struct shelf *s, const char *dir);
+/* Adds the games of another folder (and its subfolders), then sorts the
+ * whole shelf again. Returns how many it added, or -1. */
+int shelf_add_dir(struct shelf *s, const char *dir);
+/* Adds every folder listed in a text file, one path a line ('#' starts a
+ * comment). Returns how many games it added. */
+int shelf_add_dirs_from(struct shelf *s, const char *list_path);
 void shelf_free(struct shelf *s);
 
 /* The system of a file name, from its extension; -1 when it is no game. */
