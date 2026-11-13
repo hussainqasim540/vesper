@@ -1,4 +1,4 @@
-# r36s-handheld (working name)
+# Vesper
 
 An original game frontend for the R36S (RK3326, 640x480) under Lume, for
 GBA, GBC and Nintendo DS, with switchable layouts for the DS's two screens.

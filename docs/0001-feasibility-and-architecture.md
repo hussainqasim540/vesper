@@ -1,8 +1,9 @@
 # 0001: Feasibility and architecture
 
-Status: **proposal, waiting for the go-ahead.** Date: 2026-11-13.
+Status: **accepted** on 2026-11-13, with the skeleton before the benchmark
+(see Milestones). The frontend is called **Vesper**.
 
-An original game frontend for the R36S under Lume (`~/dev/r36s-lightos`), for
+Vesper is an original game frontend for the R36S under Lume (`~/dev/r36s-lightos`), for
 GBA, GBC and Nintendo DS. It competes with slot; it shares no code or assets
 with it. The sourced research behind this note is in
 [`research-ds-feasibility.md`](research-ds-feasibility.md). In this note,
@@ -46,7 +47,7 @@ with it. The sourced research behind this note is in
   techniques. It has KMSDRM output and its own layouts, and ROCKNIX and dArkOS
   already ship it for RK3326 [V]. Nobody has published A35 numbers [U].
   **It is the open default, if it holds the speed** [M].
-- **First milestone, a benchmark** [M]: DraStic and DSperate on the R36S
+- **A benchmark, the second milestone** [M]: DraStic and DSperate on the R36S
   under Lume. Play HeartGold or SoulSilver (overworld and double battle),
   Platinum (Jubilife) and Black 2 / White 2 (Castelia), and record fps,
   skipped frames and CPU per core. That decides the DS backend.
@@ -154,7 +155,7 @@ emulator those, so the emulator always sees one fixed layout.
 - **Saving before power-off:** Lume's shims kill the caller with SIGKILL.
   Before calling `poweroff`, the frontend therefore asks the emulator to quit
   and save, waits for it (with a time limit), and runs `sync`.
-- **Background:** proposed, the user's lilac and pink valley
+- **Background:** the user's lilac and pink valley (confirmed)
   (`valley-landscape-...-6318x2633.jpg`), cropped to 4:3 around the centre
   and stored at 640x480. Colours: QuisLab's palette (lilac `#9D88EC`, night
   `#0E0C16`, warm white `#F2EEE8`). The image's licence for redistribution has
@@ -174,10 +175,13 @@ GBM/EGL/GLES and ALSA; it has no SDL2, which only DraStic needs.
 
 ## Milestones
 
-1. **Benchmark** DraStic and DSperate (and gpSP, mGBA) on the console, and
-   choose the DS backend.
-2. **Frontend skeleton:** KMS/GLES, evdev, ALSA, a shelf with the
+The order was changed at the go-ahead: the skeleton comes first, then the
+benchmark.
+
+1. **Frontend skeleton:** KMS/GLES, evdev, ALSA, a shelf with the
    background, GBA/GBC through libretro.
+2. **Benchmark** DraStic and DSperate (and gpSP, mGBA) on the console, and
+   choose the DS backend.
 3. **DS bridge:** shared memory, layouts, R2/L2, the stylus cursor.
 4. **Menu and saves:** save states, settings, a clean power-off.
 5. **Automatic layout** for HGSS, Platinum and BW/BW2.
