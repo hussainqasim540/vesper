@@ -2,6 +2,7 @@
 
 An original game frontend for the R36S (RK3326, 640x480) under Lume, for
 GBA, GBC and Nintendo DS, with switchable layouts for the DS's two screens.
+Written in C, with DSperate's DS core built in (GPL-3.0-or-later).
 
 Nothing is built yet. Start with
 [`docs/0001-feasibility-and-architecture.md`](docs/0001-feasibility-and-architecture.md);
